@@ -4,32 +4,25 @@ import time
 import config
 
 class CloudMusic:
-    def __init__(self,api,phone,password):
+    def __init__(self,api,cookie):
         self.api = api
-        self.phone=phone
-        self.password=password
+        self.cookie = cookie
         self.s=r.session()
 
     def get(self,url):
-        return self.s.get(self.api+url)
+        # 每次请求都自动带上 cookie，相当于随身携带"通行证"
+        sep = '&' if '?' in url else '?'
+        return self.s.get(self.api + url + sep + 'cookie=' + self.cookie)
 
     def login(self):
-        """登录"""
-        res = self.get('/login/cellphone?phone=%s&password=%s' % (self.phone, self.password))
+        """用cookie验证登录状态"""
+        res = self.get('/login/status')
         data=res.json()
-        print('登录接口返回：', data)
-        if data.get('account'):
-            return data.get('account').get('id')
+        print('登录状态返回：', data)
+        profile = data.get('data', {}).get('profile')
+        if profile:
+            return profile.get('userId')
         return None
-
-    def refresh(self):
-        """刷新登录状态"""
-        res=self.get('/login/refresh')
-        data=res.json()
-        if data.get('code')==200:
-            return True
-        print(data)
-        return False
 
     def createMusicList(self,name):
         """创建歌单"""
@@ -101,10 +94,9 @@ class CloudMusic:
 
 if __name__=='__main__':
     api=config.api
-    phone=config.phone
-    password=config.password
+    cookie=config.cookie
     print('开始登录')
-    cm=CloudMusic(api,phone,password)
+    cm=CloudMusic(api,cookie)
     uid=cm.login()
     if not uid:
         print('登录失败')
