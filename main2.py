@@ -10,10 +10,13 @@ class CloudMusic:
         self.s=r.session()
 
     def get(self,url):
-        # 每次请求都自动带上 cookie，相当于随身携带"通行证"
+        # 自动检查并补全 cookie 前缀，兼容两种情况
+        cookie_str = self.cookie
+        if not cookie_str.startswith('MUSIC_U='):
+            cookie_str = 'MUSIC_U=' + cookie_str
         sep = '&' if '?' in url else '?'
-        return self.s.get(self.api + url + sep + 'cookie=' + self.cookie)
-
+        return self.s.get(self.api + url + sep + 'cookie=' + cookie_str)
+        
     def login(self):
         """用cookie验证登录状态"""
         res = self.get('/login/status')
