@@ -14,13 +14,13 @@ class CloudMusic:
         return self.s.get(self.api+url)
 
     def login(self):
-    """登录"""
-    res = self.get('/login/cellphone?phone=%s&password=%s' % (self.phone, self.password))
-    data=res.json()
-    print('登录接口返回：', data)  # 临时调试用，看完记得删掉
-    if data.get('account'):
-        return data.get('account').get('id')
-    return None
+        """登录"""
+        res = self.get('/login/cellphone?phone=%s&password=%s' % (self.phone, self.password))
+        data=res.json()
+        print('登录接口返回：', data)
+        if data.get('account'):
+            return data.get('account').get('id')
+        return None
 
     def refresh(self):
         """刷新登录状态"""
