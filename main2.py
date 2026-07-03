@@ -2,7 +2,6 @@
 import requests as r
 import time
 import config
-from urllib.parse import quote
 
 class CloudMusic:
     def __init__(self,api,cookie):
@@ -11,11 +10,8 @@ class CloudMusic:
         self.s=r.session()
 
     def get(self,url):
-        # 对 cookie 进行 URL 编码，避免里面的特殊符号（如 %、;、=）扰乱网址解析
-        safe_cookie = quote(self.cookie, safe='')
         sep = '&' if '?' in url else '?'
-        full_url = self.api + url + sep + 'cookie=' + safe_cookie
-        return self.s.get(full_url)
+        return self.s.get(self.api + url + sep + 'cookie=' + self.cookie)
 
     def login(self):
         """用cookie验证登录状态"""
@@ -113,7 +109,7 @@ if __name__=='__main__':
             print('不到8点，不处理')
             exit(0)
 
-        list_name = '每日推荐'  # 固定歌单名，不再带日期
+        list_name = '每日推荐'
         print('固定歌单名 list_name=%s' % list_name)
         user_music_list = cm.getUserMusicList(uid)
         if list_name in user_music_list:
@@ -124,7 +120,6 @@ if __name__=='__main__':
             list_id = cm.createMusicList(list_name)
         print('歌单id list_id=%s' % list_id)
 
-        # 先清空歌单里的旧歌
         old_music_ids = cm.getMusicListDetail(list_id)
         if len(old_music_ids) > 0:
             old_ids_str = ','.join(old_music_ids)
@@ -133,7 +128,6 @@ if __name__=='__main__':
         else:
             print('歌单目前是空的，无需清空')
 
-        # 获取今天的日推并全部加入
         print('获取日推歌曲：')
         day_music_ids = cm.getDaySend()
         print(day_music_ids)
