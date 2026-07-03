@@ -35,8 +35,7 @@ class CloudMusic:
         """获取每日推荐"""
         res=self.get('/recommend/songs')
         data=res.json()
-        print('日推接口原始返回：', data)
-        recommend=data.get('recommend')
+        recommend=data.get('data', {}).get('dailySongs', [])
         ids=[]
         for item in recommend:
             ids.append(str(item.get('id')))
