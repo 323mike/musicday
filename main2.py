@@ -10,8 +10,9 @@ class CloudMusic:
         self.s=r.session()
 
     def get(self,url):
+        real_ip = '116.25.146.177'
         sep = '&' if '?' in url else '?'
-        return self.s.get(self.api + url + sep + 'cookie=' + self.cookie)
+        return self.s.get(self.api + url + sep + 'cookie=' + self.cookie + '&realIP=' + real_ip)
 
     def login(self):
         """用cookie验证登录状态"""
