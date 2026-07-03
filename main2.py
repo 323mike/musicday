@@ -35,6 +35,7 @@ class CloudMusic:
         """获取每日推荐"""
         res=self.get('/recommend/songs')
         data=res.json()
+        print('日推接口原始返回：', data)
         recommend=data.get('recommend')
         ids=[]
         for item in recommend:
@@ -139,5 +140,7 @@ if __name__=='__main__':
                 print('添加日推列表：%s【成功】' % (music_ids))
             else:
                 print('添加日推列表：%s【失败】' % (music_ids))
-    except:
-        print('error')
+    except Exception as e:
+        print('详细错误信息：', str(e))
+        import traceback
+        traceback.print_exc()
